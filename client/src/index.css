@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+li:nth-child(odd) {
+  @apply bg-gray-800;
+}
+li {
+  @apply p-3;
+}
