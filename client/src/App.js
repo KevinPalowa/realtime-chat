@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
-const socket = io.connect("192.168.1.10:3001");
+const socket = io.connect("192.168.1.14:3001");
 function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -9,7 +9,7 @@ function App() {
   const chatBoxRef = useRef(null);
   const handleSendMessage = (e) => {
     e.preventDefault();
-    socket.emit("message", message);
+    socket.emit("message", { id: socket.id, value: message });
     setMessage("");
   };
   /* scroll to the bottom when new message come */
@@ -33,6 +33,7 @@ function App() {
       }
     });
     socket.on("messageResponse", (res) => {
+      console.log(socket.id === res.id);
       setMessages((prev) => {
         return [...prev, res];
       });
@@ -45,7 +46,14 @@ function App() {
   return (
     <div className="bg-gray-900/90 min-h-screen text-white relative">
       <ul className="relative">
-        {isConnected && messages.map((msg) => <li>{msg}</li>)}
+        {isConnected &&
+          messages.map((msg) =>
+            socket.id === msg.id ? (
+              <li className="text-green-400">{msg.value}</li>
+            ) : (
+              <li>{msg.value}</li>
+            )
+          )}
         <div ref={chatBoxRef}></div>
       </ul>
 
