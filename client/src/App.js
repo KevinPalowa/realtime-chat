@@ -20,11 +20,10 @@ function App() {
       setIsConnected(false);
     });
     socket.on("isTypingResponse", (res) => {
-      if (res) {
+      console.log(res);
+      if (res.status && res.id !== socket.id) {
         setIsTyping(true);
-        console.log("bener");
       } else {
-        console.log("salah");
         setIsTyping(false);
       }
     });
@@ -53,7 +52,9 @@ function App() {
           onSubmit={handleSendMessage}
         >
           <input
-            onFocus={() => socket.emit("isTyping", true)}
+            onFocus={() =>
+              socket.emit("isTyping", { id: socket.id, status: true })
+            }
             onBlur={() => socket.emit("isTyping", false)}
             onChange={(e) => {
               setMessage(e.target.value);
