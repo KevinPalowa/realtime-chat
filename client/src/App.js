@@ -1,16 +1,21 @@
 import io from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 const socket = io.connect("192.168.1.10:3001");
 function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [isTyping, setIsTyping] = useState(false);
+  const chatBoxRef = useRef(null);
   const handleSendMessage = (e) => {
     e.preventDefault();
     socket.emit("message", message);
     setMessage("");
   };
+  /* scroll to the bottom when new message come */
+  useEffect(() => {
+    chatBoxRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   useEffect(() => {
     socket.on("connect", () => {
       setIsConnected(true);
@@ -20,7 +25,7 @@ function App() {
       setIsConnected(false);
     });
     socket.on("isTypingResponse", (res) => {
-      console.log(res);
+      /* typing status only appear to the other user */
       if (res.status && res.id !== socket.id) {
         setIsTyping(true);
       } else {
@@ -28,7 +33,6 @@ function App() {
       }
     });
     socket.on("messageResponse", (res) => {
-      console.log(res);
       setMessages((prev) => {
         return [...prev, res];
       });
@@ -39,12 +43,17 @@ function App() {
     };
   });
   return (
-    <div className="bg-gray-900/90 min-h-screen text-white ">
-      <ul>{isConnected && messages.map((msg) => <li>{msg}</li>)}</ul>
+    <div className="bg-gray-900/90 min-h-screen text-white relative">
+      <ul className="relative">
+        {isConnected && messages.map((msg) => <li>{msg}</li>)}
+        <div ref={chatBoxRef}></div>
+      </ul>
+
       <div className="fixed bottom-0 left-0 right-0 ">
         {isTyping && (
           <div className="text-sm bg-gray-800 p-2">Someone's typing...</div>
         )}
+
         <form
           id="form"
           action=""
