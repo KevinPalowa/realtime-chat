@@ -7,9 +7,14 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [isTyping, setIsTyping] = useState(false);
   const chatBoxRef = useRef(null);
+  const date = new Date();
   const handleSendMessage = (e) => {
     e.preventDefault();
-    socket.emit("message", { id: socket.id, value: message });
+    socket.emit("message", {
+      id: socket.id,
+      value: message,
+      time: date.toLocaleTimeString(),
+    });
     setMessage("");
   };
   /* scroll to the bottom when new message come */
@@ -49,7 +54,10 @@ function App() {
         {isConnected &&
           messages.map((msg) =>
             socket.id === msg.id ? (
-              <li className="text-green-400">{msg.value}</li>
+              <li className="flex justify-between h-10 px-3">
+                <p className="text-green-400 self-center">{msg.value}</p>
+                <span className="text-xs self-end">{msg.time}</span>
+              </li>
             ) : (
               <li>{msg.value}</li>
             )
