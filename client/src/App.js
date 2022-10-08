@@ -53,7 +53,7 @@ function App() {
   });
   return (
     <div className="bg-gray-900/90 min-h-screen max-h-screen text-white flex">
-      <ul className="overflow-y-scroll w-full mb-14">
+      <ul className="overflow-y-auto w-full mb-14">
         {isConnected &&
           messages.map((msg) =>
             socket.id === msg.id ? (
