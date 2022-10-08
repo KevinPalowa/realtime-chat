@@ -11,11 +11,14 @@ function App() {
   const date = new Date();
   const handleSendMessage = (e) => {
     e.preventDefault();
-    socket.emit("message", {
-      id: socket.id,
-      value: message,
-      time: date.toLocaleTimeString(),
-    });
+    let trimMessage = message.trim();
+    if (trimMessage !== "") {
+      socket.emit("message", {
+        id: socket.id,
+        value: trimMessage,
+        time: date.toLocaleTimeString(),
+      });
+    }
     setMessage("");
   };
   /* scroll to the bottom when new message come */
